@@ -14,6 +14,14 @@ interface RecordData {
   ttd: string;
 }
 
+async function getAcademicData() {
+  const res = await fetch("");
+  if (!res.ok) {
+    throw new Error("getAcademicData: Failed to Fetch Data");
+  }
+  return res.json;
+}
+
 const data1: RecordData = {
   nim: "19223345",
   nama: "John Doe",
@@ -193,7 +201,7 @@ export default function Page() {
       <form>
         <input
           type="submit"
-          className="w-full rounded-md bg-gray-800 py-1 font-medium italic text-white hover:cursor-pointer"
+          className="w-full rounded-md bg-gray-800 py-1 font-medium italic text-white hover:cursor-pointer hover:bg-black"
         />
       </form>
     </div>
