@@ -1,4 +1,6 @@
+"use client";
 import React from "react";
+import { hitungIPK } from "@/utils/indeks";
 
 interface MataKuliah {
   kodeMK: string;
@@ -58,38 +60,6 @@ const data2: RecordData = {
   ttd: "abcdefghijklmn",
 };
 
-const fromIndeks = (indeks: string) => {
-  switch (indeks) {
-    case "A":
-      return 4.0;
-    case "AB":
-      return 3.5;
-    case "B":
-      return 3.0;
-    case "BC":
-      return 2.5;
-    case "C":
-      return 2.0;
-    case "D":
-      return 1.0;
-    case "E":
-      return 0.0;
-    default:
-      throw new Error("fromIndeks: Indeks Tidak Ditemukan");
-  }
-};
-
-const hitungIPK = (MK: MataKuliah[]) => {
-  let nilaiKolektif = 0;
-  let totalSKS = 0;
-  MK.forEach((matkul) => {
-    nilaiKolektif += fromIndeks(matkul.nilaiMK) * matkul.sksMK;
-    totalSKS += matkul.sksMK;
-  });
-
-  return nilaiKolektif / totalSKS;
-};
-
 const Record = (record: RecordData) => {
   return (
     <tr>
@@ -112,18 +82,82 @@ const Record = (record: RecordData) => {
 const InputMataKuliah = ({ index }: { index: string }) => (
   <div className="flex w-full gap-4">
     <text className="min-w-28 font-semibold">Mata Kuliah {index}</text>
-    <input placeholder="Kode Mata Kuliah" />
-    <input placeholder="Nama Mata Kuliah" />
-    <input placeholder="Nilai Mata Kuliah" />
-    <input placeholder="SKS Mata Kuliah" />
+    <input
+      name="kode"
+      minLength={6}
+      maxLength={6}
+      placeholder="Kode Mata Kuliah"
+      required
+    />
+    <input name="nama" placeholder="Nama Mata Kuliah" required />
+    <input
+      name="nilai"
+      placeholder="Nilai Mata Kuliah"
+      required
+      pattern="[Aa][Bb]?|[Bb][Cc]?|[Cc]|[Dd]|[Ee]"
+    />
+    <input
+      name="sks"
+      type="number"
+      max={9}
+      placeholder="SKS Mata Kuliah"
+      required
+    />
   </div>
 );
+
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const recordData: RecordData[] = [];
+  const formData = new FormData(e.currentTarget);
+
+  const nim = formData.get("nim-input");
+  const nama = formData.get("nama-input");
+  const kodeMK = formData.getAll("kode");
+  const namaMK = formData.getAll("nama");
+  const nilaiMK = formData.getAll("nilai");
+  const sksMK = formData.getAll("sks");
+
+  console.log(nim);
+  console.log(nama);
+  console.log(kodeMK);
+  console.log(namaMK);
+  console.log(nilaiMK);
+  console.log(sksMK);
+
+  if (kodeMK.length !== 10) {
+    alert("Please fill the empty fields for 'Kode Mata Kuliah'!");
+  } else if (namaMK.length !== 10) {
+    alert("Please fill the empty fields for 'Nama Mata Kuliah'!");
+  } else if (nilaiMK.length !== 10) {
+    alert("Please fill the empty fields for 'Nilai Mata Kuliah'!");
+  } else if (sksMK.length !== 10) {
+    alert("Please fill the empty fields for 'SKS Mata Kuliah'!");
+  } else {
+    // sendInputValueToApi(inputValue).then(() => /* Do something */)
+  }
+};
 
 export default function Page() {
   return (
     <div className="flex flex-col px-8 py-8">
-      <header className="flex w-full justify-center py-4">
+      <header className="flex w-full flex-col items-center gap-6 py-4">
         <h1 className="font-bold">Academic Database II4031</h1>
+        <nav className="flex w-full justify-between gap-4 font-semibold">
+          <a
+            href="./download"
+            className="w-full rounded-md border border-black p-1 text-center hover:bg-black hover:text-white"
+          >
+            Download Transcript
+          </a>
+          <a
+            href="./config"
+            className="w-full rounded-md border border-black p-1 text-center hover:bg-black hover:text-white"
+          >
+            Configure Encryption Key
+          </a>
+        </nav>
       </header>
       <section className="flex flex-col gap-4 py-4">
         <div className="flex gap-4">
@@ -172,33 +206,38 @@ export default function Page() {
           </table>
         </article>
       </section>
-      <section className="flex w-full pb-2">
-        <aside className="flex w-1/5 flex-col py-4 pr-4">
-          <h2 className="font-semibold italic">Input Data Diri</h2>
-          <label htmlFor="nim-input" className="block pb-1 pt-2 font-medium">
-            NIM
-          </label>
-          <input id="nim-input" placeholder="Masukkan NIM" />
-          <label htmlFor="nama-input" className="block pb-1 pt-2 font-medium">
-            Nama Mahasiswa
-          </label>
-          <input id="nama-input" placeholder="Masukkan Nama Mahasiswa" />
-        </aside>
-        <section className="flex w-4/5 flex-col gap-2 overflow-x-auto py-4 pl-4">
-          <h2 className="pb-1 font-semibold italic">Input Mata Kuliah</h2>
-          <InputMataKuliah index="01" />
-          <InputMataKuliah index="02" />
-          <InputMataKuliah index="03" />
-          <InputMataKuliah index="04" />
-          <InputMataKuliah index="05" />
-          <InputMataKuliah index="06" />
-          <InputMataKuliah index="07" />
-          <InputMataKuliah index="08" />
-          <InputMataKuliah index="09" />
-          <InputMataKuliah index="10" />
+      <form onSubmit={handleSubmit}>
+        <section className="flex w-full pb-2">
+          <aside className="flex w-1/5 flex-col py-4 pr-4">
+            <h2 className="font-semibold italic">Input Data Diri</h2>
+            <label htmlFor="nim-input" className="block pb-1 pt-2 font-medium">
+              NIM
+            </label>
+            <input id="nim-input" name="nim-input" placeholder="Masukkan NIM" />
+            <label htmlFor="nama-input" className="block pb-1 pt-2 font-medium">
+              Nama Mahasiswa
+            </label>
+            <input
+              id="nama-input"
+              name="nama-input"
+              placeholder="Masukkan Nama Mahasiswa"
+            />
+          </aside>
+          <section className="flex w-4/5 flex-col gap-2 overflow-x-auto py-4 pl-4">
+            <h2 className="pb-1 font-semibold italic">Input Mata Kuliah</h2>
+            <InputMataKuliah index="01" />
+            <InputMataKuliah index="02" />
+            <InputMataKuliah index="03" />
+            <InputMataKuliah index="04" />
+            <InputMataKuliah index="05" />
+            <InputMataKuliah index="06" />
+            <InputMataKuliah index="07" />
+            <InputMataKuliah index="08" />
+            <InputMataKuliah index="09" />
+            <InputMataKuliah index="10" />
+          </section>
         </section>
-      </section>
-      <form>
+
         <input
           type="submit"
           className="w-full rounded-md bg-gray-800 py-1 font-medium italic text-white hover:cursor-pointer hover:bg-black"
