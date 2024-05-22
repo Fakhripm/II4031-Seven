@@ -21,7 +21,7 @@ async function getAcademicData() {
 const Record = (data: Akademik) => {
   return (
     <tr>
-      <td>{data.NIM}</td>
+      <td>{data.nim}</td>
       <td>{data.nama}</td>
       <td>{data.kode_mk1}</td>
       <td>{data.nama_matkul1}</td>

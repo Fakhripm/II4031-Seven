@@ -1,3 +1,6 @@
+import { useRouter } from "next/navigation";
+import { hitungIPK } from "@/utils/indeks";
+
 export default function InputData() {
   const InputMataKuliah = ({ index }: { index: string }) => (
     <div className="flex w-full gap-4">
@@ -26,7 +29,9 @@ export default function InputData() {
     </div>
   );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -38,7 +43,11 @@ export default function InputData() {
     const nilaiMK = formData.getAll("nilai");
     const sksMK = formData.getAll("sks");
 
-    if (kodeMK.length !== 10) {
+    if (nim === null) {
+      alert("Please fill the empty 'NIM' field");
+    } else if (nama === null) {
+      alert("Please fill the empty 'Nama' field");
+    } else if (kodeMK.length !== 10) {
       alert("Please fill the empty fields for 'Kode Mata Kuliah'!");
     } else if (namaMK.length !== 10) {
       alert("Please fill the empty fields for 'Nama Mata Kuliah'!");
@@ -47,8 +56,64 @@ export default function InputData() {
     } else if (sksMK.length !== 10) {
       alert("Please fill the empty fields for 'SKS Mata Kuliah'!");
     } else {
-      // sendInputValueToApi(inputValue).then(() => /* Do something */)
+      const mahasiswa = JSON.stringify({
+        nim: nim,
+        nama: nama,
+        kode_mk1: kodeMK[0],
+        kode_mk2: kodeMK[1],
+        kode_mk3: kodeMK[2],
+        kode_mk4: kodeMK[3],
+        kode_mk5: kodeMK[4],
+        kode_mk6: kodeMK[5],
+        kode_mk7: kodeMK[6],
+        kode_mk8: kodeMK[7],
+        kode_mk9: kodeMK[8],
+        kode_mk10: kodeMK[9],
+        nama_matkul1: namaMK[0],
+        nama_matkul2: namaMK[1],
+        nama_matkul3: namaMK[2],
+        nama_matkul4: namaMK[3],
+        nama_matkul5: namaMK[4],
+        nama_matkul6: namaMK[5],
+        nama_matkul7: namaMK[6],
+        nama_matkul8: namaMK[7],
+        nama_matkul9: namaMK[8],
+        nama_matkul10: namaMK[9],
+        nilai1: nilaiMK[0],
+        nilai2: nilaiMK[1],
+        nilai3: nilaiMK[2],
+        nilai4: nilaiMK[3],
+        nilai5: nilaiMK[4],
+        nilai6: nilaiMK[5],
+        nilai7: nilaiMK[6],
+        nilai8: nilaiMK[7],
+        nilai9: nilaiMK[8],
+        nilai10: nilaiMK[9],
+        sks1: Number(sksMK[0]),
+        sks2: Number(sksMK[1]),
+        sks3: Number(sksMK[2]),
+        sks4: Number(sksMK[3]),
+        sks5: Number(sksMK[4]),
+        sks6: Number(sksMK[5]),
+        sks7: Number(sksMK[6]),
+        sks8: Number(sksMK[7]),
+        sks9: Number(sksMK[8]),
+        sks10: Number(sksMK[9]),
+        ipk: hitungIPK(nilaiMK, sksMK),
+        ttd: "ARLECCHINO",
+      });
+
+      console.log(mahasiswa);
+
+      const result = await fetch("api/data/mahasiswa/" + nim, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: mahasiswa,
+      });
     }
+    router.refresh();
   };
 
   return (

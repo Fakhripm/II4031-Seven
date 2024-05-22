@@ -1,10 +1,3 @@
-interface MataKuliah {
-  kodeMK: string;
-  namaMK: string;
-  nilaiMK: string;
-  sksMK: number;
-}
-
 const fromIndeks = (indeks: string) => {
   switch (indeks) {
     case "A":
@@ -26,13 +19,16 @@ const fromIndeks = (indeks: string) => {
   }
 };
 
-export const hitungIPK = (MK: MataKuliah[]) => {
+export const hitungIPK = (
+  nilaiMK: FormDataEntryValue[],
+  sksMK: FormDataEntryValue[],
+) => {
   let nilaiKolektif = 0;
   let totalSKS = 0;
-  MK.forEach((matkul) => {
-    nilaiKolektif += fromIndeks(matkul.nilaiMK) * matkul.sksMK;
-    totalSKS += matkul.sksMK;
-  });
+  for (let i = 0; i < 10; i++) {
+    nilaiKolektif += fromIndeks(nilaiMK[i] as string) * Number(sksMK[i]);
+    totalSKS += Number(sksMK[i]);
+  }
 
   return nilaiKolektif / totalSKS;
 };
