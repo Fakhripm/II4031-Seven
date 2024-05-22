@@ -57,7 +57,6 @@ export default function InputData() {
       alert("Please fill the empty fields for 'SKS Mata Kuliah'!");
     } else {
       const mahasiswa = JSON.stringify({
-        id: 2,
         nim: nim,
         nama: nama,
         kode_mk1: kodeMK[0],
@@ -113,9 +112,8 @@ export default function InputData() {
         },
         body: mahasiswa,
       });
-      console.log("Ini result", result);
-      router.refresh();
     }
+    router.refresh();
   };
 
   return (

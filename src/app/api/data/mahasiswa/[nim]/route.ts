@@ -4,7 +4,7 @@ import { supabase } from "../../../../../utils/supabase/client";
 export interface Akademik {
   id: number;
   created_at: string; // ISO date string
-  NIM: string;
+  nim: string;
   nama: string;
   kode_mk1: string | null;
   kode_mk2: string | null;
