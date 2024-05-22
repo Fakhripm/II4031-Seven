@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { hitungIPK } from "@/utils/indeks";
-import { GET, POST } from "./api/data/route";
+import { GET } from "./api/data/route";
 import { NextRequest } from "next/server";
-import InputData from "./Form";
+import InputData from "./InputData";
 import { Akademik } from "./api/data/mahasiswa/[nim]/route";
 
 async function getAcademicData() {
@@ -72,13 +71,12 @@ const Record = (data: Akademik) => {
 export default function Page() {
   const [data, setData] = useState(Array<Akademik>());
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getAcademicData();
-      console.log(result);
-      setData(result);
-    };
+  const fetchData = async () => {
+    const result = await getAcademicData();
+    setData(result);
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -145,7 +143,7 @@ export default function Page() {
           </table>
         </article>
       </section>
-      <InputData />
+      <InputData onFormSubmit={fetchData}/>
     </div>
   );
 }

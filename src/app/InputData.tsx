@@ -1,7 +1,14 @@
-import { useRouter } from "next/navigation";
 import { hitungIPK } from "@/utils/indeks";
+import { useRef } from "react";
 
-export default function InputData() {
+export default function InputData({
+  onFormSubmit,
+}: {
+  onFormSubmit: () => void;
+}) {
+  const nimRef = useRef<HTMLInputElement>(null);
+  const namaRef = useRef<HTMLInputElement>(null);
+
   const InputMataKuliah = ({ index }: { index: string }) => (
     <div className="flex w-full gap-4">
       <text className="min-w-32 font-semibold">Mata Kuliah {index}</text>
@@ -29,8 +36,6 @@ export default function InputData() {
     </div>
   );
 
-  const router = useRouter();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -43,18 +48,15 @@ export default function InputData() {
     const nilaiMK = formData.getAll("nilai");
     const sksMK = formData.getAll("sks");
 
-    if (nim === null) {
-      alert("Please fill the empty 'NIM' field");
-    } else if (nama === null) {
-      alert("Please fill the empty 'Nama' field");
-    } else if (kodeMK.length !== 10) {
-      alert("Please fill the empty fields for 'Kode Mata Kuliah'!");
-    } else if (namaMK.length !== 10) {
-      alert("Please fill the empty fields for 'Nama Mata Kuliah'!");
-    } else if (nilaiMK.length !== 10) {
-      alert("Please fill the empty fields for 'Nilai Mata Kuliah'!");
-    } else if (sksMK.length !== 10) {
-      alert("Please fill the empty fields for 'SKS Mata Kuliah'!");
+    if (nim === null || nama === null) {
+      alert("Please fill the empty field in 'Input Data Diri' section!");
+    } else if (
+      kodeMK.length !== 10 ||
+      nilaiMK.length !== 10 ||
+      sksMK.length !== 10 ||
+      namaMK.length !== 10
+    ) {
+      alert("Please fill the empty fields in 'Input Mata Kuliah' section!");
     } else {
       const mahasiswa = JSON.stringify({
         nim: nim,
@@ -103,8 +105,6 @@ export default function InputData() {
         ttd: "ARLECCHINO",
       });
 
-      console.log(mahasiswa);
-
       const result = await fetch("api/data/mahasiswa/" + nim, {
         method: "POST",
         headers: {
@@ -112,8 +112,17 @@ export default function InputData() {
         },
         body: mahasiswa,
       });
+
+      if (onFormSubmit) {
+        onFormSubmit();
+      }
+      if (nimRef.current) {
+        nimRef.current.value = "";
+      }
+      if (namaRef.current) {
+        namaRef.current.value = "";
+      }
     }
-    router.refresh();
   };
 
   return (
@@ -124,13 +133,19 @@ export default function InputData() {
           <label htmlFor="nim-input" className="block pb-1 pt-2 font-medium">
             NIM
           </label>
-          <input id="nim-input" name="nim-input" placeholder="Masukkan NIM" />
+          <input
+            id="nim-input"
+            name="nim-input"
+            placeholder="Masukkan NIM"
+            ref={nimRef}
+          />
           <label htmlFor="nama-input" className="block pb-1 pt-2 font-medium">
             Nama Mahasiswa
           </label>
           <input
             id="nama-input"
             name="nama-input"
+            ref={namaRef}
             placeholder="Masukkan Nama Mahasiswa"
           />
         </aside>

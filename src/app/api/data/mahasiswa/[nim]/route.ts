@@ -65,12 +65,13 @@ export const GET = async (
     const { data, error } = await supabase
       .from("akademik")
       .select()
-      .eq("NIM", nim);
+      .eq("nim", nim);
     if (error) {
       throw error;
     }
     return NextResponse.json({ data }, { status: 200 });
   } catch (err) {
+    console.error();
     return NextResponse.json({ message: "err", err }, { status: 500 });
   }
 };
