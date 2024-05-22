@@ -98,6 +98,8 @@ export const POST = async (
     }
     return NextResponse.json({ data }, { status: 201 });
   } catch (err) {
+    console.log("Error...")
+    console.error(err)
     return NextResponse.json({ message: "err", err }, { status: 500 });
   }
 };
