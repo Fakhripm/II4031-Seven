@@ -59,7 +59,7 @@ export const downloadPDF = (akademik: Akademik) => {
         {
           table: {
             headerRows: 1,
-            widths: ["auto", "*", "*", "auto", "auto"],
+            widths: ["auto", "auto", "*", "auto", "auto"],
             body: [
               [
                 { text: "No", style: "tableHeader", alignment: "center" },
