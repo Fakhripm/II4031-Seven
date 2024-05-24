@@ -12,9 +12,32 @@ function convert(c: string | null, state: boolean) {
   return c;
 }
 
+async function downloadTranscript(nim: string) {
+  try {
+    const response = await fetch(`/api/data/mahasiswa/${nim}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const result = await response.json();
+    // setData(result.data[0]);
+    console.log("Data...");
+    // console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+
+  return <button type="button"></button>;
+}
+
 const Record = ({ data, decode }: { data: Akademik; decode: boolean }) => {
   return (
     <tr>
+      <td></td>
       <td>{convert(data.nim, decode)}</td>
       <td>{convert(data.nama, decode)}</td>
       <td>{convert(data.kode_mk1, decode)}</td>

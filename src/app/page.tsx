@@ -67,6 +67,7 @@ export default function Page() {
           <table className="min-w-[6000px] table-auto">
             <thead className="bg-gray-200">
               <tr>
+                <th>Download Transcript</th>
                 <th>NIM</th>
                 <th>Nama Mahasiswa</th>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (

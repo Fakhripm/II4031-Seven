@@ -5,7 +5,7 @@ import { rc4EncryptModified } from "@/utils/crypto/rc4";
 import { useAppContext } from "@/context";
 
 function rc4Enc(p: string) {
-  const { rc4, setRC4 } = useAppContext();
+  const { rc4 } = useAppContext();
   return btoa(rc4EncryptModified(p, rc4));
 }
 
