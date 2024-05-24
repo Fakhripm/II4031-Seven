@@ -35,20 +35,6 @@ export default function Page() {
     <div className="flex flex-col px-8 py-8">
       <header className="flex w-full flex-col items-center gap-6 py-4">
         <h1 className="font-bold">Academic Database II4031</h1>
-        <nav className="flex w-full justify-between gap-4 font-semibold">
-          <a
-            href="./download"
-            className="w-full rounded-md border border-black p-1 text-center hover:bg-black hover:text-white"
-          >
-            Download Transcript
-          </a>
-          <a
-            href="./config"
-            className="w-full rounded-md border border-black p-1 text-center hover:bg-black hover:text-white"
-          >
-            Configure Encryption Key
-          </a>
-        </nav>
       </header>
       <section className="flex flex-col gap-4 py-4">
         <div className="flex gap-4">
