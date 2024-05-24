@@ -4,8 +4,7 @@ import { hitungIPK } from "@/utils/indeks";
 import { rc4EncryptModified } from "@/utils/crypto/rc4";
 import { useAppContext } from "@/context";
 import SHA3 from "sha3";
-import { getKeyPair } from "@/utils/crypto/rsa";
-import { decryptRSA, arrayToBase64 } from "@/utils/crypto/rsa2";
+import { generateKeys, encryption, decryption,encodeBase64 } from "@/utils/crypto/rsa";
 
 export default function InputData({
   onFormSubmit,
@@ -86,14 +85,19 @@ export default function InputData({
         sksMK.join() +
         tempIPK.toString();
 
+      const keyPair = generateKeys();
+      const e = keyPair[0];
+      const d = keyPair[1];
+      const n = keyPair[2];
+      //const encRes = encryption(message, e, n);
+      //console.log(encRes)
+      //const messageBase64 = encodeBase64(encRes);
+      //const decRes = decryption(encRes, d, n);
+
       const hashObj = new SHA3(512);
       hashObj.update(message);
       const hashResult = hashObj.digest("hex");
-
-      const keyPair = getKeyPair();
-      const digitalSignature = arrayToBase64(
-        decryptRSA(hashResult, keyPair.privateKey),
-      );
+      const digitalSignature = encryption(message, d,n)
 
       const mahasiswa = JSON.stringify({
         nim: rc4Enc(nim),
@@ -139,9 +143,9 @@ export default function InputData({
         sks9: sksMK[8],
         sks10: sksMK[9],
         ipk: rc4Enc(tempIPK.toString()),
-        ttd: rc4Enc(digitalSignature),
+        ttd: (encodeBase64(digitalSignature)),
         public_key: rc4Enc(
-          `(${keyPair.publicKey.e.toString(16)}; ${keyPair.publicKey.n.toString(16)})`,
+          `(${e}; ${n})`,
         ),
       });
 

@@ -71,7 +71,7 @@ const message = "never gonna give you up";
 const key = "never gonna let you down";
 
 const encrypted = rc4EncryptModified(message, key);
-console.log("Encrypted:", encrypted);
+//console.log("Encrypted:", encrypted);
 
 const decrypted = rc4EncryptModified(encrypted, key);
-console.log("Decrypted:", decrypted);
+//console.log("Decrypted:", decrypted);
