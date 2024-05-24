@@ -90,7 +90,7 @@ const Record = ({
 
   function handleDownload(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    console.log(plaindata);
+    // console.log(plaindata);
     downloadPDF(plaindata);
   }
 
@@ -148,6 +148,7 @@ const Record = ({
       <td>{recData.sks10}</td>
       <td>{recData.ipk}</td>
       <td>{recData.ttd}</td>
+      <td>{recData.public_key}</td>
     </tr>
   );
 };

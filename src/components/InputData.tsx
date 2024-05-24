@@ -3,6 +3,9 @@ import { useRef } from "react";
 import { hitungIPK } from "@/utils/indeks";
 import { rc4EncryptModified } from "@/utils/crypto/rc4";
 import { useAppContext } from "@/context";
+import SHA3 from "sha3";
+import { getKeyPair } from "@/utils/crypto/rsa";
+import { decryptRSA, arrayToBase64 } from "@/utils/crypto/rsa2";
 
 export default function InputData({
   onFormSubmit,
@@ -74,6 +77,24 @@ export default function InputData({
         sksMK[i] = rc4Enc(sksMK[i].toString());
       }
 
+      const message =
+        nim +
+        nama +
+        kodeMK.join() +
+        namaMK.join() +
+        nilaiMK.join() +
+        sksMK.join() +
+        tempIPK.toString();
+
+      const hashObj = new SHA3(512);
+      hashObj.update(message);
+      const hashResult = hashObj.digest("hex");
+
+      const keyPair = getKeyPair();
+      const digitalSignature = arrayToBase64(
+        decryptRSA(hashResult, keyPair.privateKey),
+      );
+
       const mahasiswa = JSON.stringify({
         nim: rc4Enc(nim),
         nama: rc4Enc(nama),
@@ -118,8 +139,10 @@ export default function InputData({
         sks9: sksMK[8],
         sks10: sksMK[9],
         ipk: rc4Enc(tempIPK.toString()),
-        ttd: rc4Enc("ARLECCHINO"),
-        public_key: rc4Enc("ARLECCHINO"),
+        ttd: rc4Enc(digitalSignature),
+        public_key: rc4Enc(
+          `(${keyPair.publicKey.e.toString(16)}; ${keyPair.publicKey.n.toString(16)})`,
+        ),
       });
 
       const result = await fetch("api/data/mahasiswa/" + nim, {
