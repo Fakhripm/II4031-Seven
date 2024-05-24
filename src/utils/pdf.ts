@@ -34,7 +34,7 @@ export const downloadPDF = (akademik: Akademik) => {
       }
     }
 
-    const totalSKS = courses.reduce((sum, course) => sum + course.sks, 0);
+    const totalSKS = courses.reduce((sum, course) => sum + Number(course.sks) , 0);
 
     const courseRows: Content[][] = courses.map((course, index) => [
       { text: (index + 1).toString(), alignment: "center" },
