@@ -1,5 +1,13 @@
-import { hitungIPK } from "@/utils/indeks";
+"use client";
 import { useRef } from "react";
+import { hitungIPK } from "@/utils/indeks";
+import { rc4EncryptModified } from "@/utils/crypto/rc4";
+import { useAppContext } from "@/context";
+
+function rc4Enc(p: string) {
+  const { rc4, setRC4 } = useAppContext();
+  return btoa(rc4EncryptModified(p, rc4));
+}
 
 export default function InputData({
   onFormSubmit,
@@ -41,11 +49,11 @@ export default function InputData({
 
     const formData = new FormData(e.currentTarget);
 
-    const nim = formData.get("nim-input");
-    const nama = formData.get("nama-input");
-    const kodeMK = formData.getAll("kode");
-    const namaMK = formData.getAll("nama");
-    const nilaiMK = formData.getAll("nilai");
+    const nim = formData.get("nim-input") as string;
+    const nama = formData.get("nama-input") as string;
+    const kodeMK = formData.getAll("kode") as string[];
+    const namaMK = formData.getAll("nama") as string[];
+    const nilaiMK = formData.getAll("nilai") as string[];
     const sksMK = formData.getAll("sks");
 
     if (nim === null || nama === null) {
@@ -58,9 +66,16 @@ export default function InputData({
     ) {
       alert("Please fill the empty fields in 'Input Mata Kuliah' section!");
     } else {
+      for (let i = 0; i < 10; i++) {
+        kodeMK[i] = rc4Enc(kodeMK[i]);
+        nilaiMK[i] = rc4Enc(nilaiMK[i]);
+        namaMK[i] = rc4Enc(namaMK[i]);
+        sksMK[i] = rc4Enc(sksMK[i].toString());
+      }
+
       const mahasiswa = JSON.stringify({
-        nim: nim,
-        nama: nama,
+        nim: rc4Enc(nim),
+        nama: rc4Enc(nama),
         kode_mk1: kodeMK[0],
         kode_mk2: kodeMK[1],
         kode_mk3: kodeMK[2],
@@ -101,8 +116,8 @@ export default function InputData({
         sks8: Number(sksMK[7]),
         sks9: Number(sksMK[8]),
         sks10: Number(sksMK[9]),
-        ipk: hitungIPK(nilaiMK, sksMK),
-        ttd: "ARLECCHINO",
+        ipk: Number(rc4Enc(hitungIPK(nilaiMK, sksMK).toString())),
+        ttd: rc4Enc("ARLECCHINO"),
       });
 
       const result = await fetch("api/data/mahasiswa/" + nim, {

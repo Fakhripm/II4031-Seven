@@ -4,6 +4,7 @@ import { GET } from "./api/data/route";
 import { NextRequest } from "next/server";
 import InputData from "./InputData";
 import { Akademik } from "./api/data/mahasiswa/[nim]/route";
+import { Record } from "./Record";
 
 async function getAcademicData() {
   const req = new NextRequest(new URL("/api/data", "http://localhost:3000"));
@@ -17,59 +18,9 @@ async function getAcademicData() {
   return data.data;
 }
 
-const Record = (data: Akademik) => {
-  return (
-    <tr>
-      <td>{data.nim}</td>
-      <td>{data.nama}</td>
-      <td>{data.kode_mk1}</td>
-      <td>{data.nama_matkul1}</td>
-      <td>{data.nilai1}</td>
-      <td>{data.sks1}</td>
-      <td>{data.kode_mk2}</td>
-      <td>{data.nama_matkul2}</td>
-      <td>{data.nilai2}</td>
-      <td>{data.sks2}</td>
-      <td>{data.kode_mk3}</td>
-      <td>{data.nama_matkul3}</td>
-      <td>{data.nilai3}</td>
-      <td>{data.sks3}</td>
-      <td>{data.kode_mk4}</td>
-      <td>{data.nama_matkul4}</td>
-      <td>{data.nilai4}</td>
-      <td>{data.sks4}</td>
-      <td>{data.kode_mk5}</td>
-      <td>{data.nama_matkul5}</td>
-      <td>{data.nilai5}</td>
-      <td>{data.sks5}</td>
-      <td>{data.kode_mk6}</td>
-      <td>{data.nama_matkul6}</td>
-      <td>{data.nilai6}</td>
-      <td>{data.sks6}</td>
-      <td>{data.kode_mk7}</td>
-      <td>{data.nama_matkul7}</td>
-      <td>{data.nilai7}</td>
-      <td>{data.sks7}</td>
-      <td>{data.kode_mk8}</td>
-      <td>{data.nama_matkul8}</td>
-      <td>{data.nilai8}</td>
-      <td>{data.sks8}</td>
-      <td>{data.kode_mk9}</td>
-      <td>{data.nama_matkul9}</td>
-      <td>{data.nilai9}</td>
-      <td>{data.sks9}</td>
-      <td>{data.kode_mk10}</td>
-      <td>{data.nama_matkul10}</td>
-      <td>{data.nilai10}</td>
-      <td>{data.sks10}</td>
-      <td>{data.ipk}</td>
-      <td>{data.ttd}</td>
-    </tr>
-  );
-};
-
 export default function Page() {
   const [data, setData] = useState(Array<Akademik>());
+  const [state, setState] = useState<boolean>(true);
 
   const fetchData = async () => {
     const result = await getAcademicData();
@@ -106,6 +57,7 @@ export default function Page() {
             name="encryption-state"
             id="encryption-state"
             className="rounded-md border border-black hover:cursor-pointer"
+            onChange={(e) => setState(e.target.value === "plaintext")}
           >
             <option value="plaintext">Plaintext</option>
             <option value="ciphertext">Ciphertext</option>
@@ -131,19 +83,19 @@ export default function Page() {
             </thead>
             <tbody className="text-center">
               {data ? (
-                data.map((record) => <Record key={record.id} {...record} />)
+                data.map((record) => (
+                  <Record decode={state} key={record.id} data={record} />
+                ))
               ) : (
                 <tr>
-                  <td colSpan={46}>
-                    No data available
-                  </td>
+                  <td colSpan={46}>No data available</td>
                 </tr>
               )}
             </tbody>
           </table>
         </article>
       </section>
-      <InputData onFormSubmit={fetchData}/>
+      <InputData onFormSubmit={fetchData} />
     </div>
   );
 }
