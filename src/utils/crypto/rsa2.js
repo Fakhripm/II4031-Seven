@@ -136,17 +136,17 @@ const arrayToBase64 = (encryptedMessage) => {
 
  
 // Contoh penggunaan
-const p = 787;
-const q = 163;
+// const p = 787;
+// const q = 163;
 
-const keyPair = generateKeyPair(p, q);
-let message = "Hello World!";
+// const keyPair = generateKeyPair(p, q);
+// let message = "Hello World!";
 
-let encryptedMessage = encryptRSA(message, keyPair.publicKey);
-console.log("Pesan terenkripsi: ", encryptedMessage);
-console.log("array to string: ",arrayToBase64(encryptedMessage));
+// let encryptedMessage = encryptRSA(message, keyPair.publicKey);
+// console.log("Pesan terenkripsi: ", encryptedMessage);
+// console.log("array to string: ",arrayToBase64(encryptedMessage));
 
-let decryptedMessage = decryptRSA(encryptedMessage, keyPair.privateKey);
-console.log("Pesan terdekripsi: ", decryptedMessage);
+// let decryptedMessage = decryptRSA(encryptedMessage, keyPair.privateKey);
+// console.log("Pesan terdekripsi: ", decryptedMessage);
 
-module.exports = { encryptRSA, decryptRSA, generateKeyPair, arrayToBase64 };
+export { encryptRSA, decryptRSA, generateKeyPair, arrayToBase64 };
