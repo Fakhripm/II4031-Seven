@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { GET } from "./api/data/route";
 import { NextRequest } from "next/server";
-import InputData from "./InputData";
+import InputData from "../components/InputData";
 import { Akademik } from "./api/data/mahasiswa/[nim]/route";
-import { Record } from "./Record";
+import { Record } from "../components/Record";
 
 async function getAcademicData() {
   const req = new NextRequest(new URL("/api/data", "http://localhost:3000"));
@@ -67,7 +67,7 @@ export default function Page() {
           <table className="min-w-[6000px] table-auto">
             <thead className="bg-gray-200">
               <tr>
-                <th>Download Transcript</th>
+                <th>Transcript</th>
                 <th>NIM</th>
                 <th>Nama Mahasiswa</th>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
@@ -80,12 +80,13 @@ export default function Page() {
                 ))}
                 <th>IPK</th>
                 <th>Digital Signature</th>
+                <th>Public Key</th>
               </tr>
             </thead>
             <tbody className="text-center">
               {data ? (
                 data.map((record) => (
-                  <Record decode={state} key={record.id} data={record} />
+                  <Record decode={state} key={record.id} cipherdata={record} />
                 ))
               ) : (
                 <tr>

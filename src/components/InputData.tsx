@@ -4,11 +4,6 @@ import { hitungIPK } from "@/utils/indeks";
 import { rc4EncryptModified } from "@/utils/crypto/rc4";
 import { useAppContext } from "@/context";
 
-function rc4Enc(p: string) {
-  const { rc4 } = useAppContext();
-  return btoa(rc4EncryptModified(p, rc4));
-}
-
 export default function InputData({
   onFormSubmit,
 }: {
@@ -16,10 +11,15 @@ export default function InputData({
 }) {
   const nimRef = useRef<HTMLInputElement>(null);
   const namaRef = useRef<HTMLInputElement>(null);
+  const [rc4] = useAppContext();
+
+  function rc4Enc(p: string) {
+    return btoa(rc4EncryptModified(p, rc4));
+  }
 
   const InputMataKuliah = ({ index }: { index: string }) => (
     <div className="flex w-full gap-4">
-      <text className="min-w-32 font-semibold">Mata Kuliah {index}</text>
+      <p className="min-w-32 font-semibold">Mata Kuliah {index}</p>
       <input
         name="kode"
         minLength={6}
@@ -66,6 +66,7 @@ export default function InputData({
     ) {
       alert("Please fill the empty fields in 'Input Mata Kuliah' section!");
     } else {
+      const tempIPK = hitungIPK(nilaiMK, sksMK);
       for (let i = 0; i < 10; i++) {
         kodeMK[i] = rc4Enc(kodeMK[i]);
         nilaiMK[i] = rc4Enc(nilaiMK[i]);
@@ -106,18 +107,19 @@ export default function InputData({
         nilai8: nilaiMK[7],
         nilai9: nilaiMK[8],
         nilai10: nilaiMK[9],
-        sks1: Number(sksMK[0]),
-        sks2: Number(sksMK[1]),
-        sks3: Number(sksMK[2]),
-        sks4: Number(sksMK[3]),
-        sks5: Number(sksMK[4]),
-        sks6: Number(sksMK[5]),
-        sks7: Number(sksMK[6]),
-        sks8: Number(sksMK[7]),
-        sks9: Number(sksMK[8]),
-        sks10: Number(sksMK[9]),
-        ipk: Number(rc4Enc(hitungIPK(nilaiMK, sksMK).toString())),
+        sks1: sksMK[0],
+        sks2: sksMK[1],
+        sks3: sksMK[2],
+        sks4: sksMK[3],
+        sks5: sksMK[4],
+        sks6: sksMK[5],
+        sks7: sksMK[6],
+        sks8: sksMK[7],
+        sks9: sksMK[8],
+        sks10: sksMK[9],
+        ipk: rc4Enc(tempIPK.toString()),
         ttd: rc4Enc("ARLECCHINO"),
+        public_key: rc4Enc("ARLECCHINO"),
       });
 
       const result = await fetch("api/data/mahasiswa/" + nim, {

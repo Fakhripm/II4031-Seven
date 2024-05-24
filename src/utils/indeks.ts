@@ -15,6 +15,7 @@ const fromIndeks = (indeks: string) => {
     case "E":
       return 0.0;
     default:
+      console.log(indeks);
       throw new Error("fromIndeks: Indeks Tidak Ditemukan");
   }
 };
