@@ -1,10 +1,25 @@
-import { useRouter } from "next/navigation";
+"use client";
+import { useRef } from "react";
 import { hitungIPK } from "@/utils/indeks";
+import { rc4EncryptModified } from "@/utils/crypto/rc4";
+import { useAppContext } from "@/context";
 
-export default function InputData() {
+export default function InputData({
+  onFormSubmit,
+}: {
+  onFormSubmit: () => void;
+}) {
+  const nimRef = useRef<HTMLInputElement>(null);
+  const namaRef = useRef<HTMLInputElement>(null);
+  const [rc4] = useAppContext();
+
+  function rc4Enc(p: string) {
+    return btoa(rc4EncryptModified(p, rc4));
+  }
+
   const InputMataKuliah = ({ index }: { index: string }) => (
     <div className="flex w-full gap-4">
-      <text className="min-w-32 font-semibold">Mata Kuliah {index}</text>
+      <p className="min-w-32 font-semibold">Mata Kuliah {index}</p>
       <input
         name="kode"
         minLength={6}
@@ -29,36 +44,39 @@ export default function InputData() {
     </div>
   );
 
-  const router = useRouter();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
 
-    const nim = formData.get("nim-input");
-    const nama = formData.get("nama-input");
-    const kodeMK = formData.getAll("kode");
-    const namaMK = formData.getAll("nama");
-    const nilaiMK = formData.getAll("nilai");
+    const nim = formData.get("nim-input") as string;
+    const nama = formData.get("nama-input") as string;
+    const kodeMK = formData.getAll("kode") as string[];
+    const namaMK = formData.getAll("nama") as string[];
+    const nilaiMK = formData.getAll("nilai") as string[];
     const sksMK = formData.getAll("sks");
 
-    if (nim === null) {
-      alert("Please fill the empty 'NIM' field");
-    } else if (nama === null) {
-      alert("Please fill the empty 'Nama' field");
-    } else if (kodeMK.length !== 10) {
-      alert("Please fill the empty fields for 'Kode Mata Kuliah'!");
-    } else if (namaMK.length !== 10) {
-      alert("Please fill the empty fields for 'Nama Mata Kuliah'!");
-    } else if (nilaiMK.length !== 10) {
-      alert("Please fill the empty fields for 'Nilai Mata Kuliah'!");
-    } else if (sksMK.length !== 10) {
-      alert("Please fill the empty fields for 'SKS Mata Kuliah'!");
+    if (nim === null || nama === null) {
+      alert("Please fill the empty field in 'Input Data Diri' section!");
+    } else if (
+      kodeMK.length !== 10 ||
+      nilaiMK.length !== 10 ||
+      sksMK.length !== 10 ||
+      namaMK.length !== 10
+    ) {
+      alert("Please fill the empty fields in 'Input Mata Kuliah' section!");
     } else {
+      const tempIPK = hitungIPK(nilaiMK, sksMK);
+      for (let i = 0; i < 10; i++) {
+        kodeMK[i] = rc4Enc(kodeMK[i]);
+        nilaiMK[i] = rc4Enc(nilaiMK[i]);
+        namaMK[i] = rc4Enc(namaMK[i]);
+        sksMK[i] = rc4Enc(sksMK[i].toString());
+      }
+
       const mahasiswa = JSON.stringify({
-        nim: nim,
-        nama: nama,
+        nim: rc4Enc(nim),
+        nama: rc4Enc(nama),
         kode_mk1: kodeMK[0],
         kode_mk2: kodeMK[1],
         kode_mk3: kodeMK[2],
@@ -89,21 +107,20 @@ export default function InputData() {
         nilai8: nilaiMK[7],
         nilai9: nilaiMK[8],
         nilai10: nilaiMK[9],
-        sks1: Number(sksMK[0]),
-        sks2: Number(sksMK[1]),
-        sks3: Number(sksMK[2]),
-        sks4: Number(sksMK[3]),
-        sks5: Number(sksMK[4]),
-        sks6: Number(sksMK[5]),
-        sks7: Number(sksMK[6]),
-        sks8: Number(sksMK[7]),
-        sks9: Number(sksMK[8]),
-        sks10: Number(sksMK[9]),
-        ipk: hitungIPK(nilaiMK, sksMK),
-        ttd: "ARLECCHINO",
+        sks1: sksMK[0],
+        sks2: sksMK[1],
+        sks3: sksMK[2],
+        sks4: sksMK[3],
+        sks5: sksMK[4],
+        sks6: sksMK[5],
+        sks7: sksMK[6],
+        sks8: sksMK[7],
+        sks9: sksMK[8],
+        sks10: sksMK[9],
+        ipk: rc4Enc(tempIPK.toString()),
+        ttd: rc4Enc("ARLECCHINO"),
+        public_key: rc4Enc("ARLECCHINO"),
       });
-
-      console.log(mahasiswa);
 
       const result = await fetch("api/data/mahasiswa/" + nim, {
         method: "POST",
@@ -112,8 +129,17 @@ export default function InputData() {
         },
         body: mahasiswa,
       });
+
+      if (onFormSubmit) {
+        onFormSubmit();
+      }
+      if (nimRef.current) {
+        nimRef.current.value = "";
+      }
+      if (namaRef.current) {
+        namaRef.current.value = "";
+      }
     }
-    router.refresh();
   };
 
   return (
@@ -124,13 +150,19 @@ export default function InputData() {
           <label htmlFor="nim-input" className="block pb-1 pt-2 font-medium">
             NIM
           </label>
-          <input id="nim-input" name="nim-input" placeholder="Masukkan NIM" />
+          <input
+            id="nim-input"
+            name="nim-input"
+            placeholder="Masukkan NIM"
+            ref={nimRef}
+          />
           <label htmlFor="nama-input" className="block pb-1 pt-2 font-medium">
             Nama Mahasiswa
           </label>
           <input
             id="nama-input"
             name="nama-input"
+            ref={namaRef}
             placeholder="Masukkan Nama Mahasiswa"
           />
         </aside>
