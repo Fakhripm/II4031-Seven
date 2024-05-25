@@ -3,7 +3,7 @@ import { TDocumentDefinitions, Content } from "pdfmake/interfaces";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { Akademik } from "@/app/api/data/mahasiswa/[nim]/route";
 import * as CryptoJS from "crypto-js";
-import { blobToBase64String, base64StringToBlob } from "blob-util";
+import { blobToBase64String, base64StringToBlob, base64StringToBlob as blobToBlob } from "blob-util";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -20,9 +20,7 @@ export const downloadPDF = (akademik: Akademik) => {
 
     for (let i = 1; i <= 10; i++) {
       const kode = akademik[`kode_mk${i}` as keyof Akademik] as string | null;
-      const nama_matkul = akademik[`nama_matkul${i}` as keyof Akademik] as
-        | string
-        | null;
+      const nama_matkul = akademik[`nama_matkul${i}` as keyof Akademik] as string | null;
       const sks = akademik[`sks${i}` as keyof Akademik] as number | null;
       const nilai = akademik[`nilai${i}` as keyof Akademik] as number | null;
 
@@ -134,13 +132,30 @@ export const downloadPDF = (akademik: Akademik) => {
         // Create a link to download the encrypted Blob
         const link = document.createElement('a');
         link.href = URL.createObjectURL(encryptedBlob);
-        link.download = 'transcript_encrypted.pdf';
+        link.download = 'encrypted_transcript.pdf';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
         console.log('Encrypted file created and downloaded successfully');
+
+        /* // Decrypt the Base64 string
+        const decrypted = CryptoJS.AES.decrypt(encrypted, password).toString(CryptoJS.enc.Utf8);
+
+        // Create a Blob from the decrypted Base64 string
+        const decryptedBlob = base64StringToBlob(decrypted, 'application/pdf');
+
+        // Create a link to download the decrypted Blob
+        const linkDecrypted = document.createElement('a');
+        linkDecrypted.href = URL.createObjectURL(decryptedBlob);
+        linkDecrypted.download = 'encrypted_decrypted_transcript.pdf';
+        document.body.appendChild(linkDecrypted);
+        linkDecrypted.click();
+        document.body.removeChild(linkDecrypted);
+
+        console.log('Decrypted file created and downloaded successfully'); */
       } catch (error) {
-        console.error('Error encrypting file:', error);
+        console.error('Error encrypting or decrypting file:', error);
       }
     });
   }
