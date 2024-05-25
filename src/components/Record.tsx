@@ -96,7 +96,7 @@ const Record = ({
 
   function handleVerify(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-
+    
   }
 
   return (

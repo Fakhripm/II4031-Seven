@@ -13,11 +13,11 @@
     "blob-util": "^2.0.2",
     "crypto-js": "^4.2.0",
     "env": "^0.0.2",
+    "js-sha3": "^0.9.3",
     "next": "14.2.3",
     "pdfmake": "^0.2.10",
     "react": "^18",
     "react-dom": "^18",
-    "sha3": "^2.1.4",
     "supabase": "^1.167.4"
   },
   "devDependencies": {

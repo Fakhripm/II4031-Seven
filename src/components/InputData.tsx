@@ -3,8 +3,12 @@ import { useRef } from "react";
 import { hitungIPK } from "@/utils/indeks";
 import { rc4EncryptModified } from "@/utils/crypto/rc4";
 import { useAppContext } from "@/context";
-import SHA3 from "sha3";
-import { generateKeys, encryption, decryption,encodeBase64 } from "@/utils/crypto/rsa";
+import {
+  generateKeys,
+  encryption,
+  encodeBase64,
+} from "@/utils/crypto/rsa";
+import { sha3_512 } from "js-sha3";
 
 export default function InputData({
   onFormSubmit,
@@ -94,10 +98,11 @@ export default function InputData({
       //const messageBase64 = encodeBase64(encRes);
       //const decRes = decryption(encRes, d, n);
 
-      const hashObj = new SHA3(512);
-      hashObj.update(message);
-      const hashResult = hashObj.digest("hex");
-      const digitalSignature = encryption(message, d,n)
+      // const hashObj = new SHA3(512);
+      // hashObj.update(message);
+      // const hashResult = hashObj.digest("hex");
+      const hashResult = sha3_512(message);
+      const digitalSignature = encryption(hashResult, d, n);
 
       const mahasiswa = JSON.stringify({
         nim: rc4Enc(nim),
@@ -143,10 +148,8 @@ export default function InputData({
         sks9: sksMK[8],
         sks10: sksMK[9],
         ipk: rc4Enc(tempIPK.toString()),
-        ttd: (encodeBase64(digitalSignature)),
-        public_key: rc4Enc(
-          `(${e}; ${n})`,
-        ),
+        ttd: rc4Enc(encodeBase64(digitalSignature)),
+        public_key: rc4Enc(`(${e}; ${n})`),
       });
 
       const result = await fetch("api/data/mahasiswa/" + nim, {

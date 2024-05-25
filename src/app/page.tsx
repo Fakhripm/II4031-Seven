@@ -57,7 +57,7 @@ export default function Page() {
           </button>
         </div>
         <article className="flex overflow-x-auto">
-          <table className="min-w-[6000px] table-auto">
+          <table className="min-w-[7000px] table-auto">
             <thead className="bg-gray-200">
               <tr>
                 <th>Transcript</th>
