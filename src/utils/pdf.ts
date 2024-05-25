@@ -84,7 +84,7 @@ export const downloadPDF = (akademik: Akademik) => {
               width: "auto",
               text: [
                 {
-                  text: `Ketua Program Studi\n\n--Begin signature--\n${signature}\n--End signature--\n\n`,
+                  text: `Ketua Program Studi\n\n--Begin signature--\n${signature.replace(/(.{60})/g, '$1\n')}\n--End signature--\n\n`,
                   alignment: "center",
                 },
                 { text: `(Dr. I Gusti Bagus Baskara)`, alignment: "center" },
