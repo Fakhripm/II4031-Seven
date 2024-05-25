@@ -37,17 +37,24 @@ export default function Page() {
         <h1 className="font-bold">Academic Database II4031</h1>
       </header>
       <section className="flex flex-col gap-4 py-4">
-        <div className="flex gap-4">
-          <h2 className="font-semibold">Academic Database</h2>
-          <select
-            name="encryption-state"
-            id="encryption-state"
-            className="rounded-md border border-black hover:cursor-pointer"
-            onChange={(e) => setState(e.target.value === "plaintext")}
+        <div className="flex flex-row justify-between">
+          <div className="flex gap-4">
+            <h2 className="font-semibold">Academic Database</h2>
+            <select
+              name="encryption-state"
+              id="encryption-state"
+              className="rounded-md border border-black hover:cursor-pointer"
+              onChange={(e) => setState(e.target.value === "plaintext")}
+            >
+              <option value="plaintext">Plaintext</option>
+              <option value="ciphertext">Ciphertext</option>
+            </select>
+          </div>
+          <button
+            className="rounded-md border border-green-700 bg-green-500 px-2 py-0.5 font-medium text-white hover:bg-green-600"
           >
-            <option value="plaintext">Plaintext</option>
-            <option value="ciphertext">Ciphertext</option>
-          </select>
+            <a href="/decrypt">Decrypt File</a>
+          </button>
         </div>
         <article className="flex overflow-x-auto">
           <table className="min-w-[6000px] table-auto">
