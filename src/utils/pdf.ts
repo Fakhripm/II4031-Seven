@@ -4,6 +4,9 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import { Akademik } from "@/app/api/data/mahasiswa/[nim]/route";
 import * as CryptoJS from "crypto-js";
 import { blobToBase64String, base64StringToBlob, base64StringToBlob as blobToBlob } from "blob-util";
+import AppConfig from "@/app/app.config"
+import { config } from "process";
+import appConfig from "@/app/app.config";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -74,7 +77,7 @@ export const downloadPDF = (akademik: Akademik) => {
           layout: "lightHorizontalLines",
         },
         {
-          text: `\nTotal Jumlah SKS = ${totalSKS}\nIPK = ${ipk}`,
+          text: `\nTotal Jumlah SKS = ${totalSKS}\nIPK = ${(Number(ipk).toFixed(2))}`,
           margin: [0, 20, 0, 20],
         },
         {
@@ -116,20 +119,18 @@ export const downloadPDF = (akademik: Akademik) => {
       },
     };
 
-    // Create PDF document as Blob
     pdfMake.createPdf(docDefinition).getBlob(async (pdfBlob) => {
       try {
         // Convert Blob to Base64
         const pdfBase64 = await blobToBase64String(pdfBlob);
 
         // Encrypt the Base64 string
-        const password = 'AAAABBBBCCCCDDDD';
+        //const password = 'AAAABBBBCCCCDDDD';
+        const password = appConfig.aes_key;
         const encrypted = CryptoJS.AES.encrypt(pdfBase64, password).toString();
 
-        // Create a Blob from the encrypted Base64 string
         const encryptedBlob = base64StringToBlob(encrypted, 'application/pdf');
 
-        // Create a link to download the encrypted Blob
         const link = document.createElement('a');
         link.href = URL.createObjectURL(encryptedBlob);
         link.download = 'encrypted_transcript.pdf';

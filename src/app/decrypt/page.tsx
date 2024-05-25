@@ -48,7 +48,7 @@ export default function Page() {
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (file) {
-      handleDecrypt(file, "AAAABBBBCCCCDDDD");
+      handleDecrypt(file, "II4031KSTIPmClHs");
     }
   };
 

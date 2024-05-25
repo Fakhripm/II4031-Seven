@@ -7,6 +7,9 @@ import {
   generateKeys,
   encryption,
   encodeBase64,
+  bigIntToNumber,
+  base10ArrayToBase64Array,
+  base64arrayToString,
 } from "@/utils/crypto/rsa";
 import { sha3_512 } from "js-sha3";
 
@@ -73,36 +76,30 @@ export default function InputData({
       alert("Please fill the empty fields in 'Input Mata Kuliah' section!");
     } else {
       const tempIPK = hitungIPK(nilaiMK, sksMK);
+      const message =
+        nim +
+        nama +
+        kodeMK.join("") +
+        namaMK.join("") +
+        nilaiMK.join("") +
+        sksMK.join("") +
+        tempIPK.toString();
       for (let i = 0; i < 10; i++) {
         kodeMK[i] = rc4Enc(kodeMK[i]);
         nilaiMK[i] = rc4Enc(nilaiMK[i]);
         namaMK[i] = rc4Enc(namaMK[i]);
         sksMK[i] = rc4Enc(sksMK[i].toString());
       }
-
-      const message =
-        nim +
-        nama +
-        kodeMK.join() +
-        namaMK.join() +
-        nilaiMK.join() +
-        sksMK.join() +
-        tempIPK.toString();
-
+      console.log(message);
       const keyPair = generateKeys();
       const e = keyPair[0];
       const d = keyPair[1];
       const n = keyPair[2];
-      //const encRes = encryption(message, e, n);
-      //console.log(encRes)
-      //const messageBase64 = encodeBase64(encRes);
-      //const decRes = decryption(encRes, d, n);
 
-      // const hashObj = new SHA3(512);
-      // hashObj.update(message);
-      // const hashResult = hashObj.digest("hex");
       const hashResult = sha3_512(message);
-      const digitalSignature = encryption(hashResult, d, n);
+      const digitalSignature = base10ArrayToBase64Array(
+        bigIntToNumber(encryption(hashResult, d, n)),
+      );
 
       const mahasiswa = JSON.stringify({
         nim: rc4Enc(nim),
@@ -148,7 +145,7 @@ export default function InputData({
         sks9: sksMK[8],
         sks10: sksMK[9],
         ipk: rc4Enc(tempIPK.toString()),
-        ttd: rc4Enc(encodeBase64(digitalSignature)),
+        ttd: rc4Enc(base64arrayToString(digitalSignature)),
         public_key: rc4Enc(`(${e}; ${n})`),
       });
 

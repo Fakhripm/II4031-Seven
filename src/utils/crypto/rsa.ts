@@ -60,8 +60,13 @@ export const encodeBase64 = (data: any) => {
     return Buffer.from(data).toString("base64");
 };
 
-export const decodeBase64 = (data: any) => {
+export const decodeBase64 = (data: String) => {
+
     return Buffer.from(data, "base64").toString("utf8");
+}
+
+function buktiModInverse(a : number,b : number,m : number) {
+    return ((a*b)%m);
 }
 
 function base64StringToIntegerArray(base64String: string): number[] {
@@ -137,7 +142,7 @@ function numberToBigInt(numbers: number[]): bigint[] {
     return bigInts;
 }
 
-function bigIntToNumber(bigInts: bigint[]): number[] {
+export function bigIntToNumber(bigInts: bigint[]): number[] {
     const numbers: number[] = [];
     for (const bigInt of bigInts) {
         numbers.push(Number(bigInt));
@@ -146,21 +151,23 @@ function bigIntToNumber(bigInts: bigint[]): number[] {
 }
 
 // const intString = (integerArrayToString(base64int));
-// console.log(`The integer to String is: ${intString}`);
+// //console.log(`The integer to String is: ${intString}`);
 // const stringInt = (stringToIntegerArray(intString));
-// console.log(`The string to integer is: ${stringInt}`);
+// //console.log(`The string to integer is: ${stringInt}`);
 
 // const base64cipher = (integerArrayToBase64String(stringInt));
-// console.log(`The decoded base64 message is: ${base64cipher}`);
+// //console.log(`The decoded base64 message is: ${base64cipher}`);
 // const decode_base64 = (decodeBase64(base64cipher));
-// console.log(`The decoded message is: ${decode_base64}`);
+// //console.log(`The decoded message is: ${decode_base64}`);
 
-const primeNumber = [101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
+const primeNumber = [101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599]
 
 export function generateKeys(): bigint[] { 
     const p = BigInt(primeNumber[Math.floor(Math.random() * primeNumber.length)]);
     const q = BigInt(primeNumber[Math.floor(Math.random() * primeNumber.length)]);
-    console.log(`The p is: ${p}; The q is: ${q}`);
+    //const p = BigInt(101);
+    //const q = BigInt(103);
+    //console.log(`The p is: ${p}; The q is: ${q}`);
     const n = p * q;
     const totient = (p - BigInt(1)) * (q - BigInt(1));
     
@@ -170,37 +177,155 @@ export function generateKeys(): bigint[] {
     return [e, d, n];
 }
 
-export function encryption(text: string, e: bigint, n: bigint): number[] {
-    const base64_text = (encodeBase64(text));
-    const base64_int = (base64StringToIntegerArray(base64_text));
-    const message = numberToBigInt(base64_int);
-    const encryptedResult = encrypt(message, [e, n]);
-    const encryptedInt = bigIntToNumber(encryptedResult);
-
-    return encryptedInt;
+function stringToAsciiArray(inputString: string): number[] {
+    const asciiArray: number[] = [];
+    for (let i = 0; i < inputString.length; i++) {
+        asciiArray.push(inputString.charCodeAt(i));
+    }
+    return asciiArray;
 }
 
-export function decryption(arrInt: number[], d: bigint, n: bigint): string {
-    const cipher = numberToBigInt(arrInt);
-    const decryptedResult = encrypt(cipher, [d, n]);
-    const result = bigIntToNumber(decryptedResult);
-    const base64result = integerArrayToBase64String(result);
-    const message = decodeBase64(base64result);
+function asciiArrayToString(asciiArray: number[]): string {
+    return asciiArray.map(code => String.fromCharCode(code)).join('');
+}
+
+export function encryption(text: string, e: bigint, n: bigint): bigint[] {
+    //const base64_text = (encodeBase64(text));
+    const intArray = (stringToAsciiArray(text));
+    const message = numberToBigInt(intArray);
+    const encryptedResult = encrypt(message, [e, n]);
+
+    return encryptedResult;
+}
+
+export function decryption(arrInt: bigint[], d: bigint, n: bigint): string {
+    //const cipher = numberToBigInt(arrInt);
+    const decryptedResult = encrypt(arrInt, [d, n]);
+    const numberResult = bigIntToNumber(decryptedResult);
+    //const result = bigIntToNumber(decryptedResult);
+    //const base64result = integerArrayToBase64String(result);
+    const message = asciiArrayToString(numberResult);
 
     return message;
 }
 
-/* const generator = generateKeys();
-const e = generator[0];
+export function newDecryption(encrypted: string, d: bigint, n: bigint): string {
+    const fourChunks = splitIntoChunks(encrypted,4);
+    const fourChunks10 = base64ArrayToBase10Array(fourChunks);
+    //console.log(fourChunks);
+    //console.log(fourChunks10)
+    const siapDIENKRIPSIBOS = numberToBigInt(fourChunks10);
+    const decrypted = decryption(siapDIENKRIPSIBOS, d,n);
+    //console.log(decrypted)
+    //const intArrayDec = bigIntToNumber(decrypted);
+    
+    //return intArrayDec;
+    return decrypted;
+}
+
+function splitIntoChunks(str: string, chunkSize: number): string[] {
+    const chunks: string[] = [];
+    for (let i = 0; i < str.length; i += chunkSize) {
+        const chunk = str.slice(i, i + chunkSize);
+        chunks.push((chunk));
+    }
+    return chunks;
+}
+
+/* function base64Stringtobase10Array(data : string[]): bigint[] {
+    const base10Array: bigint[] = [];
+    for (let i = 0;i < data.length;i++) {
+        const newChunk = data[i].replace(/^0+/, '')
+        //console.log(data[i]);
+        const angka = base64stringtointeger(newChunk);
+        base10Array.push(BigInt(angka));
+    }
+    return base10Array;
+} */
+
+/* function base64stringtointeger(data: string): number {
+    const base64Chars: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let returnN = 0;
+    for (let i = data.length-1;i>=0;i--) {
+        const nilaiHuruf = base64Chars.indexOf(data.charAt(i));
+        ////console.log(nilaiHuruf)
+        returnN = returnN*64 + nilaiHuruf;
+        ////console.log(returnN)
+    }
+    return returnN;
+}
+
+//console.log(base64stringtointeger("B7j")) */
+
+
+export function base10ArrayToBase64Array(base10Array: number[]): string[] {
+    const base64Chars: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    const base64Array: string[] = [];
+
+    base10Array.forEach((num) => {
+        let result: string = '';
+        do {
+            result = base64Chars.charAt(num % 64) + result;
+            num = Math.floor(num / 64);
+        } while (num > 0);
+        base64Array.push(result);
+    });
+
+    return base64Array;
+}
+
+function base64ArrayToBase10Array(base64Array: string[]): number[] {
+    const base64Chars: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    const base10Array: number[] = [];
+
+    base64Array.forEach((base64) => {
+        let result: number = 0;
+        for (let i = 0; i < base64.length; i++) {
+            result = result * 64 + base64Chars.indexOf(base64.charAt(i));
+        }
+        base10Array.push(result);
+    });
+
+    return base10Array;
+}
+
+//console.log(base10ArrayToBase64Array([1,2,3]))
+
+//console.log(base64ArrayToBase10Array(base10ArrayToBase64Array([1,2,3])))
+
+
+
+export function base64arrayToString(data: string[]): string {
+    return data.map(str => {
+        while (str.length < 4) {
+            str = "A" + str;
+        }
+        return str;
+    }).join('');
+}
+
+const generator = generateKeys();
+/* const e = generator[0];
 const d = generator[1];
-const n = generator[2];
+const n = generator[2]; */
 
-const message = "Hello World!";
+const e = BigInt(10103);
+const d = BigInt(1367);
+const n = BigInt(10403);
+
+//console.log(e,d,n);
+const message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 const encRes = encryption(message, e, n);
-console.log(encRes)
-const messageBase64 = encodeBase64(encRes);
-
-console.log(`The base64 encrypted message is: ${messageBase64}`);
+//console.log(encRes)
+//const messageBase64 = encodeBase64(encRes);
+const base64message = base10ArrayToBase64Array((bigIntToNumber(encRes))); 
+//console.log(`The encrypted message is: ${base64arrayToString(base64message)}`);
 
 const decRes = decryption(encRes, d, n);
-console.log(`The decrypted message is: ${decRes}`); */
+
+const newDec = newDecryption(base64arrayToString(base64message),d,n)
+//console.log(`The decrypted message is: ${decRes}`);
+
+//console.log(`New Decryption: ${newDec}`);
+
+//console.log("bukti", buktiModInverse(Number(e),Number(d), 100*102));

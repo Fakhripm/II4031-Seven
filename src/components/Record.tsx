@@ -5,6 +5,8 @@ import { Akademik } from "../app/api/data/mahasiswa/[nim]/route";
 import { MouseEvent } from "react";
 import { downloadPDF } from "@/utils/pdf";
 import { useAppContext } from "@/context";
+import { sha3_512 } from "js-sha3";
+import { newDecryption } from "@/utils/crypto/rsa";
 
 function convert(c: string, state: boolean) {
   const [rc4] = useAppContext();
@@ -96,7 +98,69 @@ const Record = ({
 
   function handleVerify(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    
+
+    const message =
+      plaindata.nim +
+      plaindata.nama +
+      plaindata.kode_mk1 +
+      plaindata.kode_mk2 +
+      plaindata.kode_mk3 +
+      plaindata.kode_mk4 +
+      plaindata.kode_mk5 +
+      plaindata.kode_mk6 +
+      plaindata.kode_mk7 +
+      plaindata.kode_mk8 +
+      plaindata.kode_mk9 +
+      plaindata.kode_mk10 +
+      plaindata.nama_matkul1 +
+      plaindata.nama_matkul2 +
+      plaindata.nama_matkul3 +
+      plaindata.nama_matkul4 +
+      plaindata.nama_matkul5 +
+      plaindata.nama_matkul6 +
+      plaindata.nama_matkul7 +
+      plaindata.nama_matkul8 +
+      plaindata.nama_matkul9 +
+      plaindata.nama_matkul10 +
+      plaindata.nilai1 +
+      plaindata.nilai2 +
+      plaindata.nilai3 +
+      plaindata.nilai4 +
+      plaindata.nilai5 +
+      plaindata.nilai6 +
+      plaindata.nilai7 +
+      plaindata.nilai8 +
+      plaindata.nilai9 +
+      plaindata.nilai10 +
+      plaindata.sks1 +
+      plaindata.sks2 +
+      plaindata.sks3 +
+      plaindata.sks4 +
+      plaindata.sks5 +
+      plaindata.sks6 +
+      plaindata.sks7 +
+      plaindata.sks8 +
+      plaindata.sks9 +
+      plaindata.sks10 +
+      plaindata.ipk;
+      console.log(message)
+    const hashResult = sha3_512(message);
+
+    const pubKey = plaindata.public_key.split(";");
+    const eNum = BigInt(pubKey[0].slice(1));
+    const nNum = BigInt(pubKey[1].slice(1, pubKey[1].length - 1));
+    console.log(eNum);
+    console.log(nNum);
+    const decDigest = (newDecryption(plaindata.ttd, eNum, nNum));
+
+    alert(
+      "Hash Result: " +
+        hashResult +
+        "\nDigest: " +
+        decDigest +
+        "\nVerdict: " +
+        (hashResult === decDigest),
+    );
   }
 
   return (
