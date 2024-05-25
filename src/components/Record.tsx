@@ -94,14 +94,27 @@ const Record = ({
     downloadPDF(plaindata);
   }
 
+  function handleVerify(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+
+  }
+
   return (
     <tr>
       <td>
         <button
-          className="rounded-md border border-black bg-blue-500 px-2 py-0.5 font-medium text-white hover:bg-blue-600"
+          className="rounded-md border border-blue-800 bg-blue-500 px-2 py-0.5 font-medium text-white hover:bg-blue-600"
           onClick={handleDownload}
         >
           Download
+        </button>
+      </td>
+      <td>
+        <button
+          className="w-full rounded-md border border-red-600 px-2 py-0.5 font-medium text-red-700 hover:bg-red-100"
+          onClick={handleVerify}
+        >
+          Verify
         </button>
       </td>
       <td>{recData.nim}</td>

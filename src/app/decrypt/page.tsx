@@ -46,32 +46,15 @@ export default function Page() {
       >
         <a href="/">Back</a>
       </button>
-      <div className="flex flex-row justify-between py-10">
+      <div className="flex flex-col py-10 items-center space-y-6">
         {/* Decrypt  */}
-        <div className="w-full flex flex-col items-center gap-4 py-4">
           <h1 className="font-bold">Decrypt Student Transcript</h1>
-          <div className="space-y-4 mx-auto items-center">
             <input type="file" className="w-full text-gray-500 font-medium text-sm bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2 file:px-4 file:mr-4 file:bg-gray-800 file:hover:bg-gray-700 file:text-white rounded"/>
             <button
             className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600"
             >
               Decrypt
             </button>
-          </div>
-        </div>
-
-        {/* Verify */}
-        <div className="w-full flex flex-col items-center gap-4 py-4">
-          <h1 className="font-bold">Verify Digital Signature</h1>
-          <div className="space-y-4 mx-auto items-center">
-            <input type="file" className="w-full text-gray-500 font-medium text-sm bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2 file:px-4 file:mr-4 file:bg-gray-800 file:hover:bg-gray-700 file:text-white rounded"/>
-            <button
-            className="w-full rounded-md bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600"
-            >
-              Verify
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -61,6 +61,7 @@ export default function Page() {
             <thead className="bg-gray-200">
               <tr>
                 <th>Transcript</th>
+                <th>Verification</th>
                 <th>NIM</th>
                 <th>Nama Mahasiswa</th>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) => (
